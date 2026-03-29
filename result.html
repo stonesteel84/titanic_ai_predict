@@ -33,19 +33,23 @@
     <div id="tsparticles"></div>
     <div class="glass-container">
         <img src="./static/titanic.png" class="titanic-img" alt="The RMS Titanic">
-        <h1>Analysis Complete</h1>
+        <h1>분석 완료</h1>
         
+        <div id="input-summary" style="margin-bottom: 20px; text-align: center; color: #8892b0; font-size: 0.9em;">
+            <p>입력 데이터: <span id="summary-text">정보를 불러오는 중...</span></p>
+        </div>
+
         <div class="result-box" style="display: block; animation: popIn 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);">
-            <h2 id="result-text" style="font-size: 30px; text-align: center;">Calculating...</h2>
+            <h2 id="result-text" style="font-size: 30px; text-align: center;">계산 중...</h2>
             
             <div class="prob-bar-container" style="margin: 20px auto;">
                 <div class="prob-bar" id="prob-bar" style="width: 0%;"></div>
             </div>
-            <p id="prob-text" style="text-align: center;">Survival Probability: <strong style="color: #64ffda;">0%</strong></p>
+            <p id="prob-text" style="text-align: center;">생존 확률: <strong style="color: #64ffda;">0%</strong></p>
             
             <div style="text-align: center; margin-top: 40px;">
                 <a href="./index.html" style="text-decoration: none;">
-                    <button class="glow-on-hover return-btn">⬅ Try Another Passenger</button>
+                    <button class="glow-on-hover return-btn">⬅ 다른 승객으로 시도하기</button>
                 </a>
             </div>
         </div>
@@ -59,36 +63,89 @@
             tsParticles.load("tsparticles", { preset: "sea" }); 
         });
         
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             // Read URL Parameters from index.html form submission
             const urlParams = new URLSearchParams(window.location.search);
             const pclass = parseInt(urlParams.get('pclass')) || 3;
-            const sex = parseInt(urlParams.get('sex')) || 0; // 0=Male, 1=Female
+            const sexStr = urlParams.get('sex');
+            const sex = (sexStr && !isNaN(parseInt(sexStr))) ? parseInt(sexStr) : 1; // 1=Male, 0=Female
             const age = parseFloat(urlParams.get('age')) || 30;
+            const sibsp = parseInt(urlParams.get('sibsp')) || 0;
+            const parch = parseInt(urlParams.get('parch')) || 0;
+            const embarkedStr = (urlParams.get('embarked') || 'S').toUpperCase();
 
-            // Simple client-side JS Logic to mock the Model for Github Pages
-            let prob = 15;
-            if (sex === 1) prob += 55;
-            if (pclass === 1) prob += 35;
-            if (pclass === 2) prob += 15;
-            if (age < 12) prob += 20;
-            if (age > 60) prob -= 15;
-            
-            // Adding a little randomization for variance
-            prob += Math.floor(Math.random() * 8) - 4;
-            prob = Math.max(1, Math.min(99, prob)); // Clamp between 1 and 99
+            const embarkedMapText = { 'C': 'Cherbourg', 'Q': 'Queenstown', 'S': 'Southampton' };
+            const summaryText = `${pclass}등급석, ${sex === 1 ? '남성' : '여성'}, ${age}세, 동승인원(${sibsp + parch}명), ${embarkedMapText[embarkedStr] || embarkedStr} 출발`;
+            document.getElementById('summary-text').textContent = summaryText;
 
-            const survived = prob > 50;
+            try {
+                // Fetch the exported weights, scaler mean/scale, and label encoder
+                const response = await fetch('./static/model_meta.json');
+                const meta = await response.json();
 
-            // DOM Update
-            setTimeout(() => {
+                // 1. Encode 'Embarked' (fallback to most frequent 'S' map if missing)
+                const embarkedIdx = meta.label_encoder.classes.indexOf(embarkedStr);
+                const embarkedMap = (embarkedIdx !== -1) ? embarkedIdx : 2; // Assuming 2 is 'S' alphabetically 
+
+                // 2. Prepare feature vector with exact same order as python model:
+                // df.columns -> Pclass, Sex, Age, SibSp, Parch, Embarked
+                const features = [pclass, sex, age, sibsp, parch, embarkedMap];
+
+                // 3. Scaling inputs
+                const scaled = features.map((val, i) => {
+                    return (val - meta.scaler.mean[i]) / meta.scaler.scale[i];
+                });
+
+                // 4. Client-side Neural Network forward pass (MLP predict)
+                let activations = scaled;
+
+                for (let i = 0; i < meta.layers.length; i++) {
+                    const layer = meta.layers[i];
+                    
+                    let numNeurons = layer.w[0].length;
+                    let nextActivations = new Array(numNeurons).fill(0);
+
+                    for (let j = 0; j < numNeurons; j++) {
+                        let sum = 0;
+                        // Matrix Multiplication: output[j] = sum(input[k] * W[k][j])
+                        for (let k = 0; k < activations.length; k++) {
+                            sum += activations[k] * layer.w[k][j];
+                        }
+                        sum += layer.b[j];
+
+                        // Apply Activation
+                        if (layer.activation === 'relu') {
+                            sum = Math.max(0, sum);
+                        } else if (layer.activation === 'sigmoid') {
+                            sum = 1 / (1 + Math.exp(-sum));
+                        }
+                        nextActivations[j] = sum;
+                    }
+                    activations = nextActivations;
+                }
+
+                // Predict Probability
+                const probVal = activations[0];
+                const survived = probVal > 0.5;
+                const probPercent = probVal * 100;
+
+                // 5. DOM Update
+                setTimeout(() => {
+                    const rt = document.getElementById('result-text');
+                    rt.textContent = survived ? '생존 예상' : '사망 예상';
+                    rt.className = survived ? 'survived' : 'perished';
+                    
+                    document.getElementById('prob-text').innerHTML = `생존 확률: <strong style="color: #64ffda;">${probPercent.toFixed(2)}%</strong>`;
+                    document.getElementById('prob-bar').style.width = probPercent + '%';
+                }, 500);
+
+            } catch (err) {
+                console.error('Failed to run local prediction model:', err);
                 const rt = document.getElementById('result-text');
-                rt.textContent = survived ? 'Survived (생존 예상)' : 'Perished (사망 예상)';
-                rt.className = survived ? 'survived' : 'perished';
-                
-                document.getElementById('prob-text').innerHTML = `Survival Probability: <strong style="color: #64ffda;">${prob.toFixed(2)}%</strong>`;
-                document.getElementById('prob-bar').style.width = prob + '%';
-            }, 500);
+                rt.textContent = '모델 로드 오류';
+                rt.className = 'perished';
+                document.getElementById('prob-text').innerHTML = `<strong style="color: #ff6b6b;">가중치 파일을 불러오는데 실패했습니다. 로컬 서버(예: Live Server)를 통해 실행 중인지 확인해 주세요.</strong>`;
+            }
         });
     </script>
 </body>
