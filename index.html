@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic AI - Survival Predictor</title>
+    <!-- Modern Clean Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./static/style.css">
+    <!-- Neon particles background -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-sea/tsparticles.preset.sea.bundle.min.js"></script>
+</head>
+<body>
+    <div id="tsparticles"></div>
+    <div class="glass-container">
+        <h1>Titanic AI Predictor</h1>
+        <p class="subtitle">Will you survive? AI calculates your fate.</p>
+        
+        <!-- Standard HTML form submission -->
+        <form action="./result.html" method="GET">
+            <div class="input-group">
+                <label>Passenger Class</label>
+                <select name="pclass" required>
+                    <option value="1">1st Class (Luxury)</option>
+                    <option value="2">2nd Class</option>
+                    <option value="3" selected>3rd Class (Economy)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Sex</label>
+                <select name="sex" required>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Age</label>
+                <input type="number" name="age" min="0" max="120" step="1" value="25" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Siblings/Spouses Aboard</label>
+                <input type="number" name="sibsp" min="0" max="10" value="0" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Parents/Children Aboard</label>
+                <input type="number" name="parch" min="0" max="10" value="0" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Port of Embarkation</label>
+                <select name="embarked" required>
+                    <option value="C">Cherbourg (C)</option>
+                    <option value="Q">Queenstown (Q)</option>
+                    <option value="S" selected>Southampton (S)</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="glow-on-hover">Predict Survival</button>
+        </form>
+    </div>
+
+    <script>
+        tsParticles.loadPreset("sea", {
+            background: { color: "transparent" },
+            particles: { color: { value: "#64ffda" } }
+        }).then(container => {
+            tsParticles.load("tsparticles", { preset: "sea" });
+        });
+    </script>
+</body>
+</html>

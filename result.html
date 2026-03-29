@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic AI - Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-sea/tsparticles.preset.sea.bundle.min.js"></script>
+    <style>
+        .result-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .prob-bar-container {
+            width: 100%;
+            max-width: 300px;
+        }
+        .return-btn {
+            font-size: 14px;
+            padding: 10px 20px;
+            width: auto;
+            border-color: #8892b0;
+            color: #8892b0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+    <div class="glass-container">
+        <img src="./static/titanic.png" class="titanic-img" alt="The RMS Titanic">
+        <h1>Analysis Complete</h1>
+        
+        <div class="result-box" style="display: block; animation: popIn 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);">
+            <h2 id="result-text" style="font-size: 30px; text-align: center;">Calculating...</h2>
+            
+            <div class="prob-bar-container" style="margin: 20px auto;">
+                <div class="prob-bar" id="prob-bar" style="width: 0%;"></div>
+            </div>
+            <p id="prob-text" style="text-align: center;">Survival Probability: <strong style="color: #64ffda;">0%</strong></p>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="./index.html" style="text-decoration: none;">
+                    <button class="glow-on-hover return-btn">⬅ Try Another Passenger</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        tsParticles.loadPreset("sea", { 
+            background: { color: "transparent" }, 
+            particles: { color: { value: "#64ffda" } } 
+        }).then(container => { 
+            tsParticles.load("tsparticles", { preset: "sea" }); 
+        });
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            // Read URL Parameters from index.html form submission
+            const urlParams = new URLSearchParams(window.location.search);
+            const pclass = parseInt(urlParams.get('pclass')) || 3;
+            const sex = parseInt(urlParams.get('sex')) || 0; // 0=Male, 1=Female
+            const age = parseFloat(urlParams.get('age')) || 30;
+
+            // Simple client-side JS Logic to mock the Model for Github Pages
+            let prob = 15;
+            if (sex === 1) prob += 55;
+            if (pclass === 1) prob += 35;
+            if (pclass === 2) prob += 15;
+            if (age < 12) prob += 20;
+            if (age > 60) prob -= 15;
+            
+            // Adding a little randomization for variance
+            prob += Math.floor(Math.random() * 8) - 4;
+            prob = Math.max(1, Math.min(99, prob)); // Clamp between 1 and 99
+
+            const survived = prob > 50;
+
+            // DOM Update
+            setTimeout(() => {
+                const rt = document.getElementById('result-text');
+                rt.textContent = survived ? 'Survived (생존 예상)' : 'Perished (사망 예상)';
+                rt.className = survived ? 'survived' : 'perished';
+                
+                document.getElementById('prob-text').innerHTML = `Survival Probability: <strong style="color: #64ffda;">${prob.toFixed(2)}%</strong>`;
+                document.getElementById('prob-bar').style.width = prob + '%';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
