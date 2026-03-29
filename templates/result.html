@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic AI - Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-sea/tsparticles.preset.sea.bundle.min.js"></script>
+    <style>
+        .result-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .prob-bar-container {
+            width: 100%;
+            max-width: 300px;
+        }
+        .return-btn {
+            font-size: 14px;
+            padding: 10px 20px;
+            width: auto;
+            border-color: #8892b0;
+            color: #8892b0;
+        }
+    </style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+    <div class="glass-container">
+        <img src="/static/titanic.png" class="titanic-img" alt="The RMS Titanic">
+        <h1>Analysis Complete</h1>
+        
+        <div class="result-box" style="display: block; animation: popIn 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);">
+            {% if error %}
+                <h2 class="perished">Error: {{ error }}</h2>
+            {% else %}
+                <h2 id="result-text" style="font-size: 30px; text-align: center;" class="{{ 'survived' if survived else 'perished' }}">
+                    {{ 'Survived (생존 예상)' if survived else 'Perished (사망 예상)' }}
+                </h2>
+                
+                <div class="prob-bar-container" style="margin: 20px auto;">
+                    <div class="prob-bar" style="width: 0%;" data-target="{{ probability }}"></div>
+                </div>
+                <p id="prob-text" style="text-align: center;">Survival Probability: <strong style="color: #64ffda;">{{ probability }}%</strong></p>
+            {% endif %}
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/" style="text-decoration: none;">
+                    <button class="glow-on-hover return-btn">⬅ Try Another Passenger</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        tsParticles.loadPreset("sea", { 
+            background: { color: "transparent" }, 
+            particles: { color: { value: "#64ffda" } } 
+        }).then(container => { 
+            tsParticles.load("tsparticles", { preset: "sea" }); 
+        });
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const bar = document.querySelector('.prob-bar');
+            if (bar) {
+                const target = bar.getAttribute('data-target');
+                setTimeout(() => { bar.style.width = target + '%'; }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
