@@ -56,12 +56,16 @@
     </div>
     
     <script>
-        tsParticles.loadPreset("sea", { 
-            background: { color: "transparent" }, 
-            particles: { color: { value: "#64ffda" } } 
-        }).then(container => { 
-            tsParticles.load("tsparticles", { preset: "sea" }); 
-        });
+        if (typeof tsParticles !== 'undefined') {
+            tsParticles.loadPreset("sea", { 
+                background: { color: "transparent" }, 
+                particles: { color: { value: "#64ffda" } } 
+            }).then(container => { 
+                tsParticles.load("tsparticles", { preset: "sea" }); 
+            }).catch(e => console.warn("tsParticles load failed:", e));
+        } else {
+            console.warn("tsParticles not defined. Skipping particle background.");
+        }
         
         document.addEventListener("DOMContentLoaded", async () => {
             // Read URL Parameters from index.html form submission
