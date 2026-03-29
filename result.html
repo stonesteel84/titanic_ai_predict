@@ -1,52 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titanic AI - Result</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-sea/tsparticles.preset.sea.bundle.min.js"></script>
-    <style>
-        .result-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .prob-bar-container {
-            width: 100%;
-            max-width: 300px;
-        }
-        .return-btn {
-            font-size: 14px;
-            padding: 10px 20px;
-            width: auto;
-            border-color: #8892b0;
-            color: #8892b0;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
-    <div id="tsparticles"></div>
     <div class="glass-container">
-        <img src="./static/titanic.png" class="titanic-img" alt="The RMS Titanic">
+        <img src="./static/sinking_titanic.png" class="titanic-img" alt="The Sinking Titanic">
         <h1>분석 완료</h1>
-        
+
         <div id="input-summary" style="margin-bottom: 20px; text-align: center; color: #8892b0; font-size: 0.9em;">
-            <p>입력 데이터: <span id="summary-text">정보를 불러오는 중...</span></p>
+            <p><span id="summary-text">정보를 불러오는 중...</span></p>
         </div>
 
         <div class="result-box" style="display: block; animation: popIn 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);">
             <h2 id="result-text" style="font-size: 30px; text-align: center;">계산 중...</h2>
-            
+
             <div class="prob-bar-container" style="margin: 20px auto;">
                 <div class="prob-bar" id="prob-bar" style="width: 0%;"></div>
             </div>
             <p id="prob-text" style="text-align: center;">생존 확률: <strong style="color: #64ffda;">0%</strong></p>
-            
+
             <div style="text-align: center; margin-top: 40px;">
                 <a href="./index.html" style="text-decoration: none;">
                     <button class="glow-on-hover return-btn">⬅ 다른 승객으로 시도하기</button>
@@ -54,19 +32,8 @@
             </div>
         </div>
     </div>
-    
+
     <script>
-        if (typeof tsParticles !== 'undefined') {
-            tsParticles.loadPreset("sea", { 
-                background: { color: "transparent" }, 
-                particles: { color: { value: "#64ffda" } } 
-            }).then(container => { 
-                tsParticles.load("tsparticles", { preset: "sea" }); 
-            }).catch(e => console.warn("tsParticles load failed:", e));
-        } else {
-            console.warn("tsParticles not defined. Skipping particle background.");
-        }
-        
         document.addEventListener("DOMContentLoaded", async () => {
             // Read URL Parameters from index.html form submission
             const urlParams = new URLSearchParams(window.location.search);
@@ -105,7 +72,7 @@
 
                 for (let i = 0; i < meta.layers.length; i++) {
                     const layer = meta.layers[i];
-                    
+
                     let numNeurons = layer.w[0].length;
                     let nextActivations = new Array(numNeurons).fill(0);
 
@@ -138,7 +105,7 @@
                     const rt = document.getElementById('result-text');
                     rt.textContent = survived ? '생존 예상' : '사망 예상';
                     rt.className = survived ? 'survived' : 'perished';
-                    
+
                     document.getElementById('prob-text').innerHTML = `생존 확률: <strong style="color: #64ffda;">${probPercent.toFixed(2)}%</strong>`;
                     document.getElementById('prob-bar').style.width = probPercent + '%';
                 }, 500);
@@ -153,4 +120,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -7,11 +7,8 @@
     <!-- Modern Clean Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./static/style.css">
-    <!-- Neon particles background -->
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-sea/tsparticles.preset.sea.bundle.min.js"></script>
 </head>
 <body>
-    <div id="tsparticles"></div>
     <div class="glass-container">
         <h1>Titanic AI Predictor</h1>
         <p class="subtitle">Will you survive? AI calculates your fate.</p>
@@ -63,13 +60,7 @@
         </form>
     </div>
 
-    <script>
-        tsParticles.loadPreset("sea", {
-            background: { color: "transparent" },
-            particles: { color: { value: "#64ffda" } }
-        }).then(container => {
-            tsParticles.load("tsparticles", { preset: "sea" });
-        });
+            <!-- Removed tsParticles script -->
     </script>
 </body>
 </html>
