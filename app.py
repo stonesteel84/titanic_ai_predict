@@ -10,7 +10,7 @@ from predict import load_model_and_scaler, prepare_data_for_prediction
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=".")
 
 model_dir = './model'
 try:
