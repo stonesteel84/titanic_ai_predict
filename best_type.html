@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic AI - 최고의 생존자 타입</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./static/style.css">
+    <style>
+        .best-card {
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid #64ffda;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .best-label {
+            color: #8892b0;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .best-value {
+            color: #ccd6f6;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-container">
+        <img src="./static/titanic.png" class="titanic-img" alt="Royal Passenger Model">
+        <h1 style="color: #64ffda;">최우선 생존 대상자</h1>
+        <p style="color: #8892b0;">AI가 분석한 가장 생존 확률이 높은 승객 타입입니다.</p>
+
+        <div class="best-card">
+            <div class="best-label">객실 등급</div>
+            <div class="best-value">1등급 (Luxury Class)</div>
+            
+            <div class="best-label">성별 및 연령</div>
+            <div class="best-value">여성 / 영유아 (0세)</div>
+            
+            <div class="best-label">가족 동반</div>
+            <div class="best-value">없음 (단독 탑승)</div>
+            
+            <div class="best-label">출발 항구</div>
+            <div class="best-value">Southampton (S)</div>
+        </div>
+
+        <div class="result-box" style="display: block;">
+            <h2 class="survived" style="font-size: 28px;">예상 생존율: 79.05%</h2>
+            <div class="prob-bar-container" style="margin: 20px auto;">
+                <div class="prob-bar" style="width: 79.05%; background: #64ffda;"></div>
+            </div>
+            <p style="font-size: 0.9em; line-height: 1.6;">
+                타이타닉의 "Woman and Children First" 원칙이 실제 데이터 모델에서도 명확히 드러납니다. 
+                1등석에 탑승한 어린아이와 여성은 가장 높은 우선순위로 구조되었습니다.
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="./index.html" style="text-decoration: none;">
+                    <button class="glow-on-hover return-btn">⬅ 메인 화면으로 돌아가기</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
