@@ -10,8 +10,7 @@
 </head>
 <body>
     <div class="glass-container">
-        <div id="result-img">
-        </div>
+        <img src="./static/sinking_titanic.png" class="titanic-img" alt="The Sinking Titanic">
         <h1>분석 완료</h1>
 
         <div id="input-summary" style="margin-bottom: 20px; text-align: center; color: #8892b0; font-size: 0.9em;">
@@ -20,7 +19,8 @@
 
         <div class="result-box" style="display: block; animation: popIn 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);">
             <h2 id="result-text" style="font-size: 30px; text-align: center;">계산 중...</h2>
-            
+
+
             <div class="prob-bar-container" style="margin: 20px auto;">
                 <div class="prob-bar" id="prob-bar" style="width: 0%;"></div>
             </div>
@@ -100,17 +100,16 @@
                 const probVal = activations[0];
                 const survived = probVal > 0.5;
                 const probPercent = probVal * 100;
-                const resultDiv = document.getElementById('result-img')
-                const isSinking = true;
+
                 // 5. DOM Update
                 setTimeout(() => {
                     const rt = document.getElementById('result-text');
                     rt.textContent = survived ? '생존 예상' : '사망 예상';
                     rt.className = survived ? 'survived' : 'perished';
-                    isSinking = survived;
-                    const imgSrc = isSinking ? "./static/sinking_titanic.png" : "./static/titanic.png";
-                    // 문자열 형태로 HTML을 직접 주입합니다.
-                    resultDiv.innerHTML = `<img src="${imgSrc}" class="titanic-img" alt="The Sinking Titanic">`;
+
+
+
+
                     document.getElementById('prob-text').innerHTML = `생존 확률: <strong style="color: #64ffda;">${probPercent.toFixed(2)}%</strong>`;
                     document.getElementById('prob-bar').style.width = probPercent + '%';
                 }, 500);
