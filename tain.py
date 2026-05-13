@@ -44,7 +44,7 @@ class TestSetEvaluationCallback(Callback):
 def main():
     df = pd.read_csv('./dataset/train.csv')
     validation_df = pd.read_csv('./dataset/validation.csv')
-    test_df = pd.read_csv('./dataset/test.csv')
+    test_df = pd.read_csv('./dataset/test-titanic.csv')
 
     X_train, y_train = prepre_data(df)
     X_val, y_val = prepre_data(validation_df)
